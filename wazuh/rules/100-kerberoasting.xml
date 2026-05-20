@@ -1,0 +1,12 @@
+<group name="windows, active_directory, kerberoasting,">
+  <rule id="100001" level="12">
+    <if_sid>60103</if_sid>
+    <field name="win.system.eventID">^4769$</field>
+    <field name="win.eventdata.ticketOptions">0x40810000</field>
+    <field name="win.eventdata.ticketEncryptionType">0x17</field>
+    <description>Kerberoasting attack detected: Service ticket requested with RC4 encryption.</description>
+    <mitre>
+      <id>T1558.003</id>
+    </mitre>
+  </rule>
+</group>
