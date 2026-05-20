@@ -12,9 +12,8 @@ A production-grade home lab simulating an enterprise environment to develop,
 test, and refine detection capabilities. Built to demonstrate practical
 SOC engineering skills: from log collection to alert tuning.
 
-This project was developed as a **Final Year Capstone** at Gokstad Akademiet (2026),
-co-authored by **Thierry Nimubona** and **Abdou Karim Secka**, under the supervision
-of Mazaher Kianpour.
+This project was developed as a **Final Year Capstone** at Gokstad Akademiet (2026).
+
 
 ## Architecture
 
@@ -89,9 +88,9 @@ Prerequisites, setup, and deployment instructions in [docs/setup.md](docs/setup.
 
 ## Author
 
-**Thierry Nimubona** — Cybersecurity Professional  
+**Thierry** — Cybersecurity Professional  
 🌐 [thierryinfosec.com](https://thierryinfosec.com)  
-💼 [LinkedIn](https://linkedin.com/in/thierry-nimubona)
+💼 [LinkedIn](https://linkedin.com/in/your-handle)
 
 ## License
 
