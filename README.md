@@ -27,7 +27,7 @@ of Mazaher Kianpour.
 | Firewall | pfSense CE | Network segmentation, firewall rules |
 | Attack Box | Kali Linux | Red team simulation |
 
-**Network segment:** `10.10.10.0/24` — fully isolated from production networks.
+**Network segment:** `192.0.2.0/24` — fully isolated from production networks.
 
 See [docs/architecture.md](docs/architecture.md) for the full network diagram and component breakdown.
 

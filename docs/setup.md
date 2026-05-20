@@ -15,15 +15,15 @@ This guide covers the prerequisites, installation, and configuration steps to re
 
 ## Network Configuration
 
-All VMs are connected to a **Host-only** or **Internal** VirtualBox network on the `10.10.10.0/24` subnet.
+All VMs are connected to a **Host-only** or **Internal** VirtualBox network on the `192.0.2.0/24` subnet.
 
 | VM | IP Address | Role |
 |---|---|---|
-| pfSense | 10.10.10.1 | Gateway / Firewall |
-| Windows Server 2022 | 10.10.10.10 | Domain Controller (corp.local) |
-| Windows 11 | 10.10.10.20 | Workstation / Wazuh Agent |
-| Kali Linux | 10.10.10.30 | Attacker Machine |
-| Ubuntu (Wazuh) | 10.10.10.40 | SIEM Server |
+| pfSense | 192.0.2.1 | Gateway / Firewall |
+| Windows Server 2022 | 192.0.2.10 | Domain Controller (lab.local) |
+| Windows 11 | 192.0.2.20 | Workstation / Wazuh Agent |
+| Kali Linux | 192.0.2.30 | Attacker Machine |
+| SIEM01 (Wazuh SIEM) | 192.0.2.40 | SIEM Server |
 
 ## Wazuh Server Installation (Ubuntu 22.04)
 
@@ -33,7 +33,7 @@ curl -sO https://packages.wazuh.com/4.7/wazuh-install.sh
 sudo bash wazuh-install.sh -a
 ```
 
-After installation, the Wazuh dashboard is accessible at `https://10.10.10.40`.
+After installation, the Wazuh dashboard is accessible at `https://192.0.2.40`.
 
 ## Wazuh Agent Deployment (Windows)
 
@@ -41,7 +41,7 @@ Run the following in an elevated PowerShell session on the Windows endpoint:
 
 ```powershell
 Invoke-WebRequest -Uri "https://packages.wazuh.com/4.x/windows/wazuh-agent-4.7.0-1.msi" -OutFile "wazuh-agent.msi"
-Start-Process -FilePath "msiexec.exe" -ArgumentList '/i wazuh-agent.msi /q WAZUH_MANAGER="10.10.10.40" WAZUH_REGISTRATION_SERVER="10.10.10.40"' -Wait
+Start-Process -FilePath "msiexec.exe" -ArgumentList '/i wazuh-agent.msi /q WAZUH_MANAGER="192.0.2.40" WAZUH_REGISTRATION_SERVER="192.0.2.40"' -Wait
 NET START WazuhSvc
 ```
 
@@ -74,6 +74,6 @@ Import the rules documented in [pfsense/firewall-rules.md](../pfsense/firewall-r
 
 After setup, verify the environment by running a test detection:
 
-1. On the Kali machine, run: `nmap -sV 10.10.10.10`
+1. On the Kali machine, run: `nmap -sV 192.0.2.10`
 2. Check the Wazuh dashboard for alerts under the **Security Events** module.
 3. Confirm that network discovery alerts (T1046) are triggered.
