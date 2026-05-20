@@ -1,25 +1,70 @@
-# Cybersecurity Homelab: Cyberattack Simulation & SIEM Detection with Wazuh
+# Wazuh SIEM Detection Lab
+> Enterprise security monitoring lab with custom detection rules mapped to MITRE ATT&CK
 
-**Final Year Capstone Project — Gokstad Akademiet, 2026**  
-**Authors:** Thierry Nimubona & Abdou Karim Secka  
-**Supervisor:** Mazaher Kianpour
+![Wazuh](https://img.shields.io/badge/Wazuh-4.x-blue)
+![MITRE](https://img.shields.io/badge/MITRE-ATT%26CK-red)
+![Status](https://img.shields.io/badge/Status-Active-green)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
----
+## Overview
 
-## Abstract
+A production-grade home lab simulating an enterprise environment to develop,
+test, and refine detection capabilities. Built to demonstrate practical
+SOC engineering skills: from log collection to alert tuning.
 
-This project presents the design, implementation, and evaluation of a virtualized enterprise security monitoring environment built to simulate realistic cyberattack scenarios and assess the detection capabilities of the open-source **Wazuh SIEM** platform.
+This project was developed as a **Final Year Capstone** at Gokstad Akademiet (2026),
+co-authored by **Thierry Nimubona** and **Abdou Karim Secka**, under the supervision
+of Mazaher Kianpour.
 
-The lab environment consisted of five virtual machines hosted in VirtualBox:
-- Windows Server 2022 Domain Controller
-- Windows 11 Workstation
-- Kali Linux Attacker Machine
-- Wazuh Management Server (Ubuntu)
-- pfSense Firewall
+## Architecture
 
-All machines were interconnected on an isolated internal network segment (`10.10.10.0/24`) replicating a small corporate Active Directory environment.
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| Hypervisor | VirtualBox | VM hosting with isolated internal network |
+| Domain Controller | Windows Server 2022 | AD DS, DNS, GPO |
+| Endpoint | Windows 11 Pro | Sysmon + Wazuh agent |
+| SIEM | Wazuh 4.x | Log aggregation, alerting |
+| Firewall | pfSense CE | Network segmentation, firewall rules |
+| Attack Box | Kali Linux | Red team simulation |
 
----
+**Network segment:** `10.10.10.0/24` — fully isolated from production networks.
+
+See [docs/architecture.md](docs/architecture.md) for the full network diagram and component breakdown.
+
+## Detection Coverage
+
+| Tactic | Techniques Tested | Detected | Coverage |
+|--------|-------------------|----------|----------|
+| Credential Access | 6 | 5 | 83% |
+| Lateral Movement | 4 | 4 | 100% |
+| Defense Evasion | 5 | 3 | 60% |
+| Discovery | 3 | 3 | 100% |
+| Exfiltration | 3 | 2 | 67% |
+
+See [full coverage matrix](mitre-coverage/coverage-matrix.md).
+
+## Featured Detections
+
+- [Kerberoasting (T1558.003)](attack-scenarios/kerberoasting.md)
+- [LSASS Dumping (T1003.001)](attack-scenarios/lsass-dump.md)
+- [Lateral Movement via SMB/PsExec (T1021.002)](attack-scenarios/lateral-movement.md)
+
+## Custom Wazuh Rules
+
+35+ custom rules mapped to MITRE ATT&CK. See [wazuh/rules/](wazuh/rules/).
+
+Example — LSASS memory dump detection:
+
+```xml
+<rule id="100201" level="14">
+  <if_sid>60103</if_sid>
+  <field name="win.eventdata.targetFilename" type="pcre2">(?i)\\lsass\.dmp</field>
+  <description>Possible LSASS memory dump detected</description>
+  <mitre>
+    <id>T1003.001</id>
+  </mitre>
+</rule>
+```
 
 ## Key Results
 
@@ -31,83 +76,23 @@ All machines were interconnected on an isolated internal network segment (`10.10
 | pfSense Firewall Rules Implemented | 6 |
 | MITRE ATT&CK Tactics Covered | Discovery, Credential Access, Defense Evasion |
 
----
+## Getting Started
 
-## Attack Scenarios (MITRE ATT&CK Mapped)
+Prerequisites, setup, and deployment instructions in [docs/setup.md](docs/setup.md).
 
-| # | Technique | Description |
-|---|---|---|
-| 1 | T1046 — Network Service Discovery | Network reconnaissance with Nmap |
-| 2 | T1135 — Network Share Discovery | Unauthenticated SMB enumeration |
-| 3 | T1557.001 — LLMNR/NBT-NS Poisoning | Credential theft via Responder |
-| 4 | T1110 — Brute Force | Authentication brute force attacks |
+## Roadmap
 
----
+- [ ] Integrate Shuffle SOAR for automated response
+- [ ] Add honeypot tier (Cowrie)
+- [ ] Simulate full ransomware kill chain
+- [ ] Migrate to Elastic Stack for comparison
 
-## Lab Architecture
+## Author
 
-```
-10.10.10.0/24 — Isolated Internal Network
-├── Windows Server 2022 (Domain Controller)   10.10.10.10
-├── Windows 11 Workstation                    10.10.10.20
-├── Kali Linux (Attacker)                     10.10.10.30
-├── Ubuntu — Wazuh SIEM Server                10.10.10.40
-└── pfSense Firewall                          10.10.10.1
-```
+**Thierry Nimubona** — Cybersecurity Professional  
+🌐 [thierryinfosec.com](https://thierryinfosec.com)  
+💼 [LinkedIn](https://linkedin.com/in/thierry-nimubona)
 
----
+## License
 
-## Tools & Technologies
-
-![Wazuh](https://img.shields.io/badge/Wazuh-SIEM-blue)
-![MITRE ATT&CK](https://img.shields.io/badge/MITRE-ATT%26CK-red)
-![Kali Linux](https://img.shields.io/badge/Kali-Linux-557C94)
-![pfSense](https://img.shields.io/badge/pfSense-Firewall-darkblue)
-![VirtualBox](https://img.shields.io/badge/VirtualBox-Lab-orange)
-![Windows Server](https://img.shields.io/badge/Windows_Server-2022-0078D6)
-
-- **SIEM:** Wazuh (open-source)
-- **Attacker Tools:** Nmap, Responder, Hydra, CrackMapExec
-- **Firewall:** pfSense
-- **Virtualization:** VirtualBox
-- **Domain:** Windows Active Directory (corp.local)
-
----
-
-## Project Documents
-
-- [`Cybersecurity Program project Karim & Thierry.docx`](./Cybersecurity%20Program%20project%20Karim%20%26%20Thierry.docx) — Full project report
-- [`Lab_Configuration_Guide.docx`](./Lab_Configuration_Guide.docx) — Lab setup and configuration guide
-- [`/screenshots`](./screenshots/) — 33 lab screenshots documenting attack execution and Wazuh detections
-
----
-
-## NICE Framework
-
-- **Work Role:** Defensive Cybersecurity (PD-WRL-001)
-- **Category:** Protection and Defense (PD)
-- **Key Competencies:** Network protocol analysis, security event analysis, IOC identification, detection rule creation, threat knowledge
-
----
-
-## Remediation Implemented
-
-Six pfSense firewall rules were deployed as concrete remediations:
-1. Block SMB traffic from attacker subnet
-2. Block RDP access from attacker subnet
-3. Disable LLMNR traffic
-4. Disable NBT-NS traffic
-5. Block lateral movement paths
-6. Enforce network segmentation between attacker and domain
-
-All rules were verified through post-implementation testing — confirmed blocked.
-
----
-
-## Portfolio
-
-View the full interactive project writeup at: **[thierryinfosec.com/final-year-project](https://thierryinfosec.com/final-year-project)**
-
----
-
-*Submitted as part of the Cybersecurity Program at Gokstad Akademiet, April 2026.*
+MIT — see [LICENSE](LICENSE)
